@@ -66,7 +66,6 @@ export default function Customers() {
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ 
     name: '', 
-    phone: '', 
     balance: 0,
     vehicles: [{ plate: '', model: '' }] 
   });
@@ -97,7 +96,6 @@ export default function Customers() {
   const handleEdit = (customer) => {
     setFormData({ 
       name: customer.name, 
-      phone: customer.phone || '', 
       balance: customer.balance || 0,
       vehicles: customer.vehicles && customer.vehicles.length > 0 
         ? customer.vehicles.map(v => ({ plate: v.plate, model: v.model || '' }))
@@ -108,7 +106,7 @@ export default function Customers() {
   };
 
   const handleCreateNew = () => {
-    setFormData({ name: '', phone: '', balance: 0, vehicles: [{ plate: '', model: '' }] });
+    setFormData({ name: '', balance: 0, vehicles: [{ plate: '', model: '' }] });
     setEditingId(null);
     setShowForm(!showForm);
   };
@@ -143,7 +141,7 @@ export default function Customers() {
       }
       setShowForm(false);
       setEditingId(null);
-      setFormData({ name: '', phone: '', balance: 0, vehicles: [{ plate: '', model: '' }] });
+      setFormData({ name: '', balance: 0, vehicles: [{ plate: '', model: '' }] });
       fetchCustomers();
       showAlert(editingId ? 'Cari başarıyla güncellendi!' : 'Yeni cari başarıyla eklendi!', 'success');
     } catch (err) {
@@ -162,7 +160,6 @@ export default function Customers() {
 
   const columns = [
     { header: 'Ad Soyad / Firma', field: 'name' },
-    { header: 'Telefon', field: 'phone', render: (row) => row.phone || '-' },
     { header: 'Araç Bilgileri', field: 'vehicles', render: (row) => (
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
         {row.vehicles && row.vehicles.length > 0 ? row.vehicles.map((v, i) => (
@@ -317,7 +314,6 @@ export default function Customers() {
             <form onSubmit={handleSubmit} className="add-form">
               <div className="form-grid">
                 <Input label="Müşteri / Firma Adı" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value.toLocaleUpperCase('tr-TR')})} />
-                <Input label="Telefon Numarası" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                 <Input label="Mevcut Bakiye (Borç)" type="number" step="0.01" value={formData.balance} onChange={e => setFormData({...formData, balance: e.target.value})} />
               </div>
 
