@@ -17,11 +17,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: color var(--transition-normal);
 }
 
 button {
@@ -30,17 +32,22 @@ button {
   border: none;
   background: none;
   outline: none;
+  transition: all var(--transition-normal);
 }
 
 input, select, textarea {
   font-family: inherit;
   outline: none;
   color: var(--color-text-main);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition-normal);
 }
 
-/* Enforce dark text color for common elements globally to prevent leakage */
+/* Enforce text color for common elements globally to prevent leakage */
 p, span:not(.badge), label, h1, h2, h3, h4, th, td {
   color: var(--color-text-main);
+  transition: color var(--transition-normal);
 }
 
 /* Page Entrance Animations - Original */
@@ -70,7 +77,12 @@ p, span:not(.badge), label, h1, h2, h3, h4, th, td {
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-premium);
   border-radius: var(--radius-lg);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), background var(--transition-normal), border var(--transition-normal);
+}
+
+.dark-mode .glass-panel {
+  background: var(--color-surface);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-panel:hover {
@@ -81,7 +93,8 @@ p, span:not(.badge), label, h1, h2, h3, h4, th, td {
 .app-container {
   display: flex;
   height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: var(--color-bg);
+  transition: background var(--transition-normal);
 }
 
 .main-content {
@@ -139,8 +152,14 @@ h1, h2, h3, h4 {
   background: rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.2);
+}
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Table Row Hover Utility */

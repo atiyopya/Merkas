@@ -14,29 +14,50 @@
   --color-bg: #F8FAFC; 
   --color-surface: rgba(255, 255, 255, 0.85); /* Glass base */
   --color-surface-hover: rgba(255, 255, 255, 0.95);
+  --color-card-bg: rgba(255, 255, 255, 0.8);
   
   --color-text-main: #1E293B; /* Slate 800 */
   --color-text-muted: #64748B; /* Slate 500 */
   --color-border: rgba(226, 232, 240, 0.6); /* Slate 200 soft */
 
-  /* Typography - Professional & Elegant */
-  --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, system-ui, sans-serif;
-  
-  /* Advanced Shadow System */
+  /* Advanced Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.04);
+  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.03);
   --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
 
-  /* Radii */
+   /* Radii */
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
   --radius-full: 9999px;
 
-  /* Animation Timings */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Fonts */
+  --font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, system-ui, sans-serif;
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode {
+  color-scheme: dark;
+  --color-bg: #0f172a; /* Slate 900 */
+  --color-surface: rgba(30, 41, 59, 0.7); /* Slate 800 glass */
+  --color-surface-hover: rgba(51, 65, 85, 0.8); /* Slate 700 glass */
+  --color-card-bg: rgba(30, 41, 59, 0.8);
+  
+  --color-text-main: #f8fafc; /* Slate 50 */
+  --color-text-muted: #94a3b8; /* Slate 400 */
+  --color-border: rgba(51, 65, 85, 0.5); /* Slate 700 soft */
+  
+  --color-primary-soft: rgba(79, 70, 229, 0.2);
+  --color-success-soft: rgba(16, 185, 129, 0.1);
+  --color-danger-soft: rgba(244, 63, 94, 0.1);
+  --color-warning-soft: rgba(245, 158, 11, 0.1);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-premium: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
 }

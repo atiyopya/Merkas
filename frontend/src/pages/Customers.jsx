@@ -4,18 +4,63 @@ import Table from '../components/ui/Table';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Card, { CardHeader, CardContent } from '../components/ui/Card';
-import { UserPlus, Search, Edit2, Wallet, TrendingUp, HandCoins, Users, BarChart2 } from 'lucide-react';
+import { UserPlus, Search, Edit2, Wallet, TrendingUp, HandCoins, Users, BarChart2, Plus, Trash2 } from 'lucide-react';
 import { useAlert } from '../context/AlertContext';
 import { SyncContext } from '../context/SyncContext';
 import { API_BASE_URL } from '../api/apiConfig';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Plus, Trash2 } from 'lucide-react';
+import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import './Customers.css';
+
+const customSelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    background: 'var(--color-surface)',
+    borderColor: state.isFocused ? 'var(--color-primary)' : 'var(--color-border)',
+    boxShadow: state.isFocused ? '0 0 0 1px var(--color-primary)' : 'none',
+    borderRadius: 'var(--radius-md)',
+    padding: '0 0.2rem',
+    cursor: 'text',
+    minHeight: '38px',
+    fontSize: '0.875rem'
+  }),
+  menu: (base) => ({
+    ...base,
+    background: 'var(--color-bg)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+    border: '1px solid var(--color-border)',
+    overflow: 'hidden',
+    zIndex: 9999
+  }),
+  option: (base, state) => ({
+    ...base,
+    background: state.isSelected ? 'var(--color-primary)' : state.isFocused ? 'var(--color-primary-soft)' : 'transparent',
+    color: state.isSelected ? 'white' : 'var(--color-text-main)',
+    cursor: 'pointer',
+    padding: '0.75rem 1rem'
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: 'var(--color-text-main)'
+  }),
+  input: (base) => ({
+    ...base,
+    color: 'var(--color-text-main)'
+  }),
+  placeholder: (base) => ({
+    ...base,
+    fontSize: '0.9rem',
+    color: 'var(--color-text-muted)'
+  })
+};
 
 export default function Customers() {
   const syncKey = React.useContext(SyncContext);
   const { showAlert } = useAlert();
   const [customers, setCustomers] = useState([]);
+  const [carModels, setCarModels] = useState([]);
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -28,12 +73,22 @@ export default function Customers() {
 
   useEffect(() => {
     fetchCustomers();
+    fetchCarModels();
   }, [syncKey]);
 
   const fetchCustomers = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/customers`);
       setCustomers(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCarModels = async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/api/carmodels`);
+      setCarModels(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -113,11 +168,11 @@ export default function Customers() {
         {row.vehicles && row.vehicles.length > 0 ? row.vehicles.map((v, i) => (
           <div key={i} style={{ 
             fontSize: '0.75rem', 
-            backgroundColor: 'rgba(99, 102, 241, 0.1)', 
+            backgroundColor: 'var(--color-primary-soft)', 
             padding: '2px 6px', 
             borderRadius: '4px',
             whiteSpace: 'nowrap',
-            border: '1px solid rgba(99, 102, 241, 0.2)'
+            border: '1px solid var(--color-border)'
           }}>
             <span style={{ fontWeight: 'bold', color: 'var(--color-primary)' }}>{v.plate}</span>
           </div>
@@ -173,7 +228,7 @@ export default function Customers() {
                     <p className="summary-title">Kayıtlı Cari Sayısı</p>
                     <h2 className="summary-amount">{totalCustomers} <span style={{fontSize:'1rem', color:'var(--color-text-muted)'}}>Firma/Kişi</span></h2>
                   </div>
-                  <div className="summary-icon" style={{ backgroundColor: 'rgba(79, 70, 229, 0.1)', color: 'var(--color-primary)' }}>
+                  <div className="summary-icon" style={{ backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}>
                     <Users size={24} />
                   </div>
                 </div>
@@ -187,7 +242,7 @@ export default function Customers() {
                 animationDelay: '200ms',
                 cursor: 'pointer',
                 borderColor: showDebtOnly ? 'var(--color-success)' : 'var(--color-border)',
-                boxShadow: showDebtOnly ? '0 0 0 2px rgba(16, 185, 129, 0.3)' : ''
+                boxShadow: showDebtOnly ? '0 0 0 2px var(--color-success-soft)' : ''
               }}
               onClick={() => setShowDebtOnly(!showDebtOnly)}
               title="Sadece borcu olan carileri filtrelemek için tıklayın"
@@ -198,7 +253,7 @@ export default function Customers() {
                     <p className="summary-title">Piyasadaki Alacak (Tahsil Bekleyen)</p>
                     <h2 className="summary-amount" style={{ color: 'var(--color-success)' }}>{totalDebt.toLocaleString('tr-TR')} ₺</h2>
                   </div>
-                  <div className="summary-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--color-success)' }}>
+                  <div className="summary-icon" style={{ backgroundColor: 'var(--color-success-soft)', color: 'var(--color-success)' }}>
                     <TrendingUp size={24} />
                   </div>
                 </div>
@@ -212,7 +267,7 @@ export default function Customers() {
                     <p className="summary-title">Müşteriye Ödenecek (Avans/Eksi)</p>
                     <h2 className="summary-amount" style={{ color: totalCredit > 0 ? 'var(--color-danger)' : 'var(--color-text-main)' }}>{totalCredit.toLocaleString('tr-TR')} ₺</h2>
                   </div>
-                  <div className="summary-icon" style={{ backgroundColor: 'rgba(244, 63, 94, 0.1)', color: 'var(--color-danger)' }}>
+                  <div className="summary-icon" style={{ backgroundColor: 'var(--color-danger-soft)', color: 'var(--color-danger)' }}>
                     <HandCoins size={24} />
                   </div>
                 </div>
@@ -276,7 +331,7 @@ export default function Customers() {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   {formData.vehicles.map((vehicle, index) => (
-                    <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '1rem', alignItems: 'end' }}>
+                    <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr auto', gap: '1rem', alignItems: 'start' }}>
                       <Input 
                         label={index === 0 ? "Plaka" : ""} 
                         value={vehicle.plate} 
@@ -284,17 +339,24 @@ export default function Customers() {
                         onChange={e => handleVehicleChange(index, 'plate', e.target.value)} 
                         required={index === 0}
                       />
-                      <Input 
-                        label={index === 0 ? "Araç Modeli (Opsiyonel)" : ""} 
-                        value={vehicle.model} 
-                        placeholder="Örn: Renault Megane"
-                        onChange={e => handleVehicleChange(index, 'model', e.target.value)} 
-                      />
+                      <div className="input-group">
+                        {index === 0 && <label className="input-label" style={{ marginBottom: '0.4rem', display: 'block' }}>Araç Modeli</label>}
+                        <CreatableSelect
+                          isClearable
+                          options={carModels.map(cm => ({ value: cm.name, label: cm.name }))}
+                          value={vehicle.model ? { value: vehicle.model, label: vehicle.model } : null}
+                          onChange={(opt) => handleVehicleChange(index, 'model', opt ? opt.value : '')}
+                          placeholder="Seç veya Yaz..."
+                          styles={customSelectStyles}
+                          formatCreateLabel={(inputValue) => `Yeni Ekle: "${inputValue}"`}
+                          noOptionsMessage={() => "Model bulunamadı"}
+                        />
+                      </div>
                       <button 
                         type="button" 
                         onClick={() => handleRemoveVehicle(index)}
                         style={{ 
-                          marginBottom: '0.75rem', 
+                          marginTop: index === 0 ? '1.8rem' : '0.5rem',
                           color: 'var(--color-danger)', 
                           padding: '0.5rem',
                           display: index === 0 && formData.vehicles.length === 1 ? 'none' : 'block'

@@ -37,6 +37,7 @@ const carModelRoutes = require('./routes/carModelRoutes');
 const authRoutes = require('./routes/authRoutes');
 const backupRoutes = require('./routes/backupRoutes');
 const searchRoutes = require('./routes/searchRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', stockRoutes);
@@ -46,6 +47,7 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/carmodels', carModelRoutes);
 app.use('/api/backup', backupRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Merkas Ticaret API is running' });

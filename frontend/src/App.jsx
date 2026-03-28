@@ -17,6 +17,7 @@ import Payments from './pages/Payments';
 import Debts from './pages/Debts';
 import Reports from './pages/Reports';
 import CustomerReport from './pages/CustomerReport';
+import Vehicles from './pages/Vehicles';
 import Profile from './pages/Profile';
 
 import { AuthProvider } from './context/AuthContext';
@@ -67,6 +68,7 @@ function App() {
                               <Route path="/" element={<Dashboard />} />
                               <Route path="/inventory" element={<Inventory />} />
                               <Route path="/stock-movements" element={<StockMovements />} />
+                              <Route path="/vehicles" element={<Vehicles />} />
                               <Route path="/customers" element={<Customers />} />
                               <Route path="/sales" element={<Sales />} />
                               <Route path="/payments" element={<Payments />} />

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Bell, UserCircle, LogOut, Settings, Database, RefreshCw, Search, Clock, Menu } from 'lucide-react';
+import { Bell, UserCircle, LogOut, Settings, Database, RefreshCw, Search, Clock, Menu, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAlert } from '../../context/AlertContext';
+import { useTheme } from '../../context/ThemeContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AsyncSelect from 'react-select/async';
@@ -11,6 +12,7 @@ import './Header.css';
 export default function Header({ onToggleSidebar }) {
     const { user, logout } = useAuth();
     const { showAlert } = useAlert();
+    const { isDarkMode, toggleTheme } = useTheme();
     const location = useLocation();
     const navigate = useNavigate();
     const [isBackingUp, setIsBackingUp] = React.useState(false);
@@ -161,6 +163,13 @@ export default function Header({ onToggleSidebar }) {
                 </button>
                 <button className="header-action-btn">
                     <Bell size={20} />
+                </button>
+                <button 
+                    className="header-action-btn theme-toggle" 
+                    onClick={toggleTheme}
+                    title={isDarkMode ? 'Aydınlık Mod' : 'Karanlık Mod'}
+                >
+                    {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
         <div className="header-profile">
           <UserCircle size={32} color="var(--color-primary)" />

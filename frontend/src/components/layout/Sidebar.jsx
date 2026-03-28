@@ -11,6 +11,7 @@ import {
   History, 
   FileSearch, 
   BarChart3,
+  Car,
   X
 } from 'lucide-react';
 import './Sidebar.css';
@@ -20,6 +21,7 @@ const menuItems = [
   { path: '/debts', name: 'Firma Borçları', icon: Wallet },
   { path: '/inventory', name: 'Stok Yönetimi', icon: Package },
   { path: '/stock-movements', name: 'Stok Hareketleri', icon: History },
+  { path: '/vehicles', name: 'Araçlar', icon: Car },
   { path: '/customers', name: 'Cari Hesaplar', icon: Users },
   { path: '/customer-report', name: 'Cari Ekstre', icon: FileSearch },
   { path: '/sales', name: 'Satış', icon: ShoppingCart },
