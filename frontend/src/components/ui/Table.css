@@ -11,13 +11,19 @@
 
 .table th {
   padding: 1.25rem 1.5rem;
-  background-color: rgba(248, 250, 252, 0.5);
-  color: var(--color-text-muted);
-  font-weight: 600;
+  background-color: var(--color-table-header-bg, #1e293b);
+  color: #ffffff;
+  font-weight: 700;
   text-transform: uppercase;
   font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--color-border);
+  letter-spacing: 0.1em;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.dark-mode .table th {
+  background-color: #0f172a;
+  color: #f8fafc;
+  border-bottom: 2px solid var(--color-primary);
 }
 
 .table td {

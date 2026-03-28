@@ -4,7 +4,7 @@ import Card, { CardContent, CardHeader } from '../components/ui/Card';
 import Table from '../components/ui/Table';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { Search, Car, Info, Package, AlertCircle, X, Plus, Edit2 } from 'lucide-react';
+import { Search, Car, X, Plus, Edit2 } from 'lucide-react';
 import { API_BASE_URL } from '../api/apiConfig';
 import { SyncContext } from '../context/SyncContext';
 import { useAlert } from '../context/AlertContext';
@@ -16,9 +16,6 @@ export default function Vehicles() {
   const [models, setModels] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [selectedModel, setSelectedModel] = useState(null);
-  const [compatibleParts, setCompatibleParts] = useState([]);
-  const [partsLoading, setPartsLoading] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [editingModel, setEditingModel] = useState(null);
   const [modelName, setModelName] = useState('');
@@ -36,20 +33,6 @@ export default function Vehicles() {
       console.error('Modeller yüklenemedi:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleShowParts = async (model) => {
-    setSelectedModel(model);
-    setCompatibleParts([]);
-    setPartsLoading(true);
-    try {
-      const res = await axios.get(`${API_BASE_URL}/api/carmodels/${model.id}/parts`);
-      setCompatibleParts(res.data);
-    } catch (error) {
-      console.error('Uyumlu parçalar yüklenemedi:', error);
-    } finally {
-      setPartsLoading(false);
     }
   };
 
@@ -99,24 +82,33 @@ export default function Vehicles() {
         </div>
       )
     },
+    {
+      header: 'Kayıtlı Araç Sayısı',
+      field: 'vehicleCount',
+      render: (row) => (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className="badge" style={{ 
+            backgroundColor: row.vehicleCount > 0 ? 'var(--color-primary-soft)' : 'var(--color-border)',
+            color: row.vehicleCount > 0 ? 'var(--color-primary)' : 'var(--color-text-muted)',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            fontWeight: 800,
+            fontSize: '0.9rem'
+          }}>
+            {row.vehicleCount} Adet
+          </span>
+        </div>
+      )
+    },
     { 
       header: 'İşlemler', 
       field: 'actions', 
       render: (row) => (
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button 
-            variant="secondary" 
-            size="sm" 
-            onClick={() => handleShowParts(row)}
-            className="action-btn-slim"
-            title="Uyumlu Parçaları Gör"
-          >
-            <Package size={14} /> Uyumlu Parçalar
-          </Button>
           <button 
             onClick={() => handleOpenEdit(row)} 
             className="btn-icon-edit" 
-            title="Düzenle"
+            title="Model İsmini Düzenle"
           >
             <Edit2 size={18} />
           </button>
@@ -128,7 +120,7 @@ export default function Vehicles() {
   return (
     <div className="vehicles-page animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Araç Modelleri & Uyumlu Parçalar</h1>
+        <h1 className="page-title">Araç Modelleri Katalog Listesi</h1>
         <div className="header-actions">
           <Button onClick={handleOpenCreate}>
             <Plus size={18} /> Yeni Model Ekle
@@ -139,7 +131,7 @@ export default function Vehicles() {
       <div className="header-stats mb-4">
         <div className="stat-item glass-panel">
           <span className="stat-value text-primary">{models.length}</span>
-          <span className="stat-label">Kayıtlı Model Sayısı</span>
+          <span className="stat-label">Sistemdeki Tanımlı Model Sayısı</span>
         </div>
       </div>
 
@@ -193,59 +185,6 @@ export default function Vehicles() {
                 <Button type="submit">{editingModel ? 'Güncelle' : 'Kaydet'}</Button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
-
-      {/* Uyumlu Parçalar Modalı */}
-      {selectedModel && (
-        <div className="modal-overlay" onClick={() => setSelectedModel(null)}>
-          <div className="modal-content glass-panel parts-modal animate-fade-in" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="header-title">
-                <h3>{selectedModel.name} - Uyumlu Parçalar</h3>
-                <p>Uyumlu modeller listesinde <b>{selectedModel.name}</b> bulunan stok kalemi sayısı: {compatibleParts.length}</p>
-              </div>
-              <button className="close-btn" onClick={() => setSelectedModel(null)}>
-                <X size={24} />
-              </button>
-            </div>
-            
-            <div className="modal-body">
-              {partsLoading ? (
-                <div className="loading-state">
-                  <div className="loader"></div>
-                </div>
-              ) : compatibleParts.length > 0 ? (
-                <div className="parts-list">
-                  {compatibleParts.map(part => (
-                    <div key={part.id} className="part-item-card">
-                      <div className="part-info">
-                        <div className="part-code">{part.code}</div>
-                        <div className="part-name">{part.name}</div>
-                        <div className="part-brand">{part.brand}</div>
-                      </div>
-                      <div className="part-stock-info">
-                        <div className={`stock-badge ${part.stock < 5 ? 'low' : ''}`}>
-                          {part.stock} Adet
-                        </div>
-                        <div className="part-price">{part.sellPrice} ₺</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="empty-state">
-                  <AlertCircle size={48} color="var(--color-warning)" />
-                  <h4>Uyumlu Parça Bulunamadı</h4>
-                  <p>Stoklarınızda <b>{selectedModel.name}</b> ile eşleşen bir ürün henüz kaydedilmemiş.</p>
-                </div>
-              )}
-            </div>
-            
-            <div className="modal-footer">
-              <Button onClick={() => setSelectedModel(null)}>Kapat</Button>
-            </div>
           </div>
         </div>
       )}

@@ -19,6 +19,7 @@
   --color-text-main: #1E293B; /* Slate 800 */
   --color-text-muted: #64748B; /* Slate 500 */
   --color-border: rgba(226, 232, 240, 0.6); /* Slate 200 soft */
+  --color-table-header-bg: #1e293b; 
 
   /* Advanced Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

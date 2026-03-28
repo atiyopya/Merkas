@@ -5,7 +5,26 @@ const prisma = require('../prismaClient');
 router.get('/', async (req, res) => {
   try {
     const models = await prisma.carModel.findMany({ orderBy: { name: 'asc' } });
-    res.json(models);
+    
+    // Her model için Vehicle tablosundaki kayıt sayısını bulalım
+    const vehicleCounts = await prisma.vehicle.groupBy({
+      by: ['model'],
+      _count: {
+        _all: true
+      }
+    });
+
+    const countMap = vehicleCounts.reduce((acc, curr) => {
+      if (curr.model) acc[curr.model] = curr._count._all;
+      return acc;
+    }, {});
+
+    const results = models.map(m => ({
+      ...m,
+      vehicleCount: countMap[m.name] || 0
+    }));
+
+    res.json(results);
   } catch (error) {
     res.status(500).json({ error: 'Modeller alınamadı' });
   }

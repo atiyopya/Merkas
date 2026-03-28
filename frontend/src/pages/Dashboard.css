@@ -69,46 +69,35 @@
   }
 }
 
-/* Filtreleme Stilleri */
+/* Filtreleme Stilleri - Modern Pro */
 .finance-filters {
   display: flex;
   gap: 0.75rem;
   align-items: center;
   flex-wrap: wrap;
   margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 1rem;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
-}
-
-@media (max-width: 480px) {
-  .finance-filters {
-    padding: 0.5rem;
-    gap: 0.5rem;
-  }
-  .segmented-control {
-    width: 100%;
-    overflow-x: auto;
-    padding: 2px;
-  }
+  padding: 0.5rem;
 }
 
 .segmented-control {
   display: flex;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--color-surface, rgba(255, 255, 255, 0.5));
+  backdrop-filter: blur(12px);
   padding: 4px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
 }
 
+.dark-mode .segmented-control {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .segment-btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   border: none;
   background: transparent;
   border-radius: var(--radius-md);
@@ -120,26 +109,29 @@
 
 .segment-btn:hover:not(.active) {
   color: var(--color-text-main);
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .segment-btn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .segment-btn.active {
   background: var(--color-primary);
-  color: white;
-  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
-  transform: scale(1.03);
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  transform: translateY(-1px);
 }
 
 .date-inputs-wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--color-surface);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  padding: 4px 8px;
+  padding: 4px 12px;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-sm);
 }
 
