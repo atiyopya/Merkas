@@ -23,6 +23,21 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Model ismini güncelle
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const updatedModel = await prisma.carModel.update({
+      where: { id: parseInt(id) },
+      data: { name: name.toLocaleUpperCase('tr-TR') }
+    });
+    res.json(updatedModel);
+  } catch (error) {
+    res.status(500).json({ error: 'Model güncellenirken hata oluştu.' });
+  }
+});
+
 // Modele göre uyumlu parçaları getir
 router.get('/:id/parts', async (req, res) => {
   try {

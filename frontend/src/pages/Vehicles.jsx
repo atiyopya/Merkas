@@ -4,7 +4,7 @@ import Card, { CardContent, CardHeader } from '../components/ui/Card';
 import Table from '../components/ui/Table';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
-import { Search, Car, Info, Package, AlertCircle, X, Plus } from 'lucide-react';
+import { Search, Car, Info, Package, AlertCircle, X, Plus, Edit2 } from 'lucide-react';
 import { API_BASE_URL } from '../api/apiConfig';
 import { SyncContext } from '../context/SyncContext';
 import { useAlert } from '../context/AlertContext';
@@ -19,8 +19,9 @@ export default function Vehicles() {
   const [selectedModel, setSelectedModel] = useState(null);
   const [compatibleParts, setCompatibleParts] = useState([]);
   const [partsLoading, setPartsLoading] = useState(false);
-  const [showAddModel, setShowAddModel] = useState(false);
-  const [newModelName, setNewModelName] = useState('');
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingModel, setEditingModel] = useState(null);
+  const [modelName, setModelName] = useState('');
 
   useEffect(() => {
     fetchModels();
@@ -52,17 +53,34 @@ export default function Vehicles() {
     }
   };
 
-  const handleAddModel = async (e) => {
+  const handleOpenCreate = () => {
+    setEditingModel(null);
+    setModelName('');
+    setShowFormModal(true);
+  };
+
+  const handleOpenEdit = (model) => {
+    setEditingModel(model);
+    setModelName(model.name);
+    setShowFormModal(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newModelName.trim()) return;
+    if (!modelName.trim()) return;
     try {
-      await axios.post(`${API_BASE_URL}/api/carmodels`, { name: newModelName });
-      setNewModelName('');
-      setShowAddModel(false);
+      if (editingModel) {
+        await axios.put(`${API_BASE_URL}/api/carmodels/${editingModel.id}`, { name: modelName });
+        showAlert('Model adı başarıyla güncellendi.', 'success');
+      } else {
+        await axios.post(`${API_BASE_URL}/api/carmodels`, { name: modelName });
+        showAlert('Yeni model başarıyla eklendi.', 'success');
+      }
+      setModelName('');
+      setShowFormModal(false);
       fetchModels();
-      showAlert('Yeni model başarıyla eklendi.', 'success');
     } catch (error) {
-      showAlert('Model eklenirken hata oluştu (Aynı isimli model olabilir).', 'error');
+      showAlert('İşlem sırasında hata oluştu. Bu isimli bir model zaten mevcut olabilir.', 'error');
     }
   };
 
@@ -85,14 +103,24 @@ export default function Vehicles() {
       header: 'İşlemler', 
       field: 'actions', 
       render: (row) => (
-        <Button 
-          variant="secondary" 
-          size="sm" 
-          onClick={() => handleShowParts(row)}
-          className="action-btn-slim"
-        >
-          <Package size={14} /> Uyumlu Parçaları Gör
-        </Button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => handleShowParts(row)}
+            className="action-btn-slim"
+            title="Uyumlu Parçaları Gör"
+          >
+            <Package size={14} /> Uyumlu Parçalar
+          </Button>
+          <button 
+            onClick={() => handleOpenEdit(row)} 
+            className="btn-icon-edit" 
+            title="Düzenle"
+          >
+            <Edit2 size={18} />
+          </button>
+        </div>
       )
     }
   ];
@@ -102,16 +130,16 @@ export default function Vehicles() {
       <div className="page-header">
         <h1 className="page-title">Araç Modelleri & Uyumlu Parçalar</h1>
         <div className="header-actions">
-          <Button onClick={() => setShowAddModel(true)}>
+          <Button onClick={handleOpenCreate}>
             <Plus size={18} /> Yeni Model Ekle
           </Button>
         </div>
       </div>
 
       <div className="header-stats mb-4">
-        <div className="stat-item glass-panel p-3">
+        <div className="stat-item glass-panel">
           <span className="stat-value text-primary">{models.length}</span>
-          <span className="stat-label">Toplam Kayıtlı Model</span>
+          <span className="stat-label">Kayıtlı Model Sayısı</span>
         </div>
       </div>
 
@@ -121,7 +149,7 @@ export default function Vehicles() {
             <Search size={18} className="search-icon" />
             <input 
               type="text" 
-              placeholder="Model ismi ara (Örn: TRAVEGO)..." 
+              placeholder="Model ara..." 
               value={search} 
               onChange={e => setSearch(e.target.value)} 
               className="search-input"
@@ -139,30 +167,30 @@ export default function Vehicles() {
         )}
       </Card>
 
-      {/* Model Ekle Modalı */}
-      {showAddModel && (
-        <div className="modal-overlay" onClick={() => setShowAddModel(false)}>
-          <div className="modal-content glass-panel add-model-modal animate-fade-in" onClick={e => e.stopPropagation()}>
+      {/* Form Modalı (Ekle/Düzenle) */}
+      {showFormModal && (
+        <div className="modal-overlay" onClick={() => setShowFormModal(false)}>
+          <div className="modal-content glass-panel fixed-modal animate-fade-in" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Yeni Araç Modeli Ekle</h3>
-              <button className="close-btn" onClick={() => setShowAddModel(false)}>
+              <h3>{editingModel ? 'Model İsmini Düzenle' : 'Yeni Araç Modeli Ekle'}</h3>
+              <button className="close-btn" onClick={() => setShowFormModal(false)}>
                 <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleAddModel}>
+            <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <Input 
                   label="Model İsmi" 
-                  placeholder="Örn: FIAT EGEA, TRAVEGO..."
-                  value={newModelName}
-                  onChange={e => setNewModelName(e.target.value)}
+                  placeholder="Örn: TRAVEGO, MEGANE 4..."
+                  value={modelName}
+                  onChange={e => setModelName(e.target.value)}
                   autoFocus
                   required
                 />
               </div>
               <div className="modal-footer">
-                <Button variant="secondary" onClick={() => setShowAddModel(false)}>Vazgeç</Button>
-                <Button type="submit">Modeli Kaydet</Button>
+                <Button variant="secondary" onClick={() => setShowFormModal(false)}>İptal</Button>
+                <Button type="submit">{editingModel ? 'Güncelle' : 'Kaydet'}</Button>
               </div>
             </form>
           </div>
@@ -209,8 +237,8 @@ export default function Vehicles() {
               ) : (
                 <div className="empty-state">
                   <AlertCircle size={48} color="var(--color-warning)" />
-                  <h4>Uyumlu Parça Yok</h4>
-                  <p>Stoklarınızda <b>{selectedModel.name}</b> modeli ile eşleşen bir ürün henüz kaydedilmemiş.</p>
+                  <h4>Uyumlu Parça Bulunamadı</h4>
+                  <p>Stoklarınızda <b>{selectedModel.name}</b> ile eşleşen bir ürün henüz kaydedilmemiş.</p>
                 </div>
               )}
             </div>
