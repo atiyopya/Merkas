@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: merkas-backend
+    env: node
+    buildCommand: "npm install && npm run build && npx prisma migrate deploy"
+    startCommand: "npm run start"
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: PORT
+        value: 5000
+    # NOT: DATABASE_URL ve FRONTEND_URL environment değişkenlerini Render dashboard üzerinde tanımlamanız gerekecek.
