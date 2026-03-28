@@ -3,7 +3,6 @@ import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AlertProvider } from './context/AlertContext';
 import Sidebar from './components/layout/Sidebar';
-import Sidebar from './components/layout/Sidebar';
 import Header from './components/layout/Header';
 import { API_BASE_URL } from './api/apiConfig';
 import './App.css';
