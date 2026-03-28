@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  brand       String?
+  code        String        @unique
+  stock       Int           @default(0)
+  buyPrice    Float?
+  sellPrice   Float?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  invoiceItems InvoiceItem[]
+  stockMovements StockMovement[]
+  compatibleModels CarModel[]
+}
+
+model CarModel {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+}
+
+model Customer {
+  id          Int           @id @default(autoincrement())
+  name        String
+  phone       String?
+  balance     Float         @default(0) // Pozitif ise borçlu (veresiye)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  vehicles    Vehicle[]
+  invoices    Invoice[]
+  transactions Transaction[]
+  stockMovements StockMovement[]
+}
+
+model Vehicle {
+  id          Int      @id @default(autoincrement())
+  plate       String   // Plaka
+  model       String?  // Araç Modeli (Zorunlu değil)
+  customerId  Int
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  invoices    Invoice[]
+  transactions Transaction[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invoice {
+  id          Int           @id @default(autoincrement())
+  customerId  Int?
+  customer    Customer?     @relation(fields: [customerId], references: [id])
+  totalAmount Float
+  type        String        @default("SALE") // SALE, RETURN vs.
+  createdAt   DateTime      @default(now())
+  items       InvoiceItem[]
+  transactions Transaction[]
+  vehicleId   Int?
+  vehicle     Vehicle?      @relation(fields: [vehicleId], references: [id])
+}
+
+model InvoiceItem {
+  id          Int       @id @default(autoincrement())
+  invoiceId   Int
+  invoice     Invoice   @relation(fields: [invoiceId], references: [id])
+  productId   Int
+  product     Product   @relation(fields: [productId], references: [id])
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+}
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  customerId  Int?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  invoiceId   Int?
+  invoice     Invoice?  @relation(fields: [invoiceId], references: [id])
+  amount      Float
+  type        String    // PAYMENT (Tahsilat), DEBT (Borçlandırma vb.)
+  method      String    // CASH, POS, MAIL_ORDER, VERESIYE
+  description String?
+  vehicleId   Int?
+  vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model ActivityLog {
+  id          Int       @id @default(autoincrement())
+  action      String    // Yapılan işin özeti
+  userId      Int?      // Yapan kullanıcı ID (Daha önce String idi, Int olarak güncelliyoruz)
+  user        User?     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model User {
+  id          Int           @id @default(autoincrement())
+  username    String        @unique
+  password    String
+  role        String        @default("USER") // ADMIN, USER vs.
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  activityLogs ActivityLog[]
+}
+model StockMovement {
+  id          Int       @id @default(autoincrement())
+  productId   Int
+  product     Product   @relation(fields: [productId], references: [id])
+  quantity    Int       // Pozitif (Giriş) veya Negatif (Çıkış)
+  type        String    // SATIŞ, ALIM, GÜNCELLEME, BAŞLANGIÇ
+  description String?
+  customerId  Int?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  createdAt   DateTime  @default(now())
+}
